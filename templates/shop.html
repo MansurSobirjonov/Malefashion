@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Shop</h4>
+                    <div class="breadcrumb__links">
+                        <a href="/">Home</a>
+                        <span>Shop</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="shop spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="shop__sidebar">
+                    <div class="shop__sidebar__search">
+                        <form method="get">
+                            <input type="search" name="s" placeholder="Search...">
+                            <button type="submit"><span class="icon_search"></span></button>
+                        </form>
+                    </div>
+                    <div class="shop__sidebar__accordion">
+                        <div class="accordion" id="accordionExample">
+                            {% for category in categories %}
+                                {% if not category.parent_category %}
+                                    <div class="card">
+                                        <div class="card-heading">
+                                            <a data-toggle="collapse" data-target="#collapse{{ forloop.counter }}">{{ category }}</a>
+                                        </div>
+                                        <div id="collapse{{ forloop.counter }}" class="collapse show" data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                {% for child in categories %}
+                                                    {% if child.parent_category == category %}
+                                                        {% if child.font_type == 0 %}
+                                                            <div class="shop__sidebar__categories">
+                                                                <ul class="nice-scroll">
+                                                                    <li><a href="#">{{ child }} ({{ child.products.count }})</a></li>
+                                                                </ul>
+                                                            </div>
+{#                                                        {% endif %}#}
+                                                        {% elif child.font_type == 1 %}
+                                                            <div class="shop__sidebar__size">
+                                                                <ul class="nice-scroll">
+                                                                    <a href="?q={{ child.name }}">
+                                                                        <label for="{{ child.name }}">{{ child }}
+                                                                            <input type="button" id="{{ child }}">
+                                                                        </label>
+                                                                    </a>
+                                                                </ul>
+                                                            </div>
+{#                                                        {% endif %}#}
+                                                        {% elif child.font_type == 2 %}
+                                                            <div class="shop__sidebar__color">
+                                                                <ul class="nice-scroll">
+                                                                    <a href="?s={{ child.name|slice:"1:" }}"><label
+                                                                        style="background: {{ child.name }}" for="{{ child.name|slice:"1:" }}">
+                                                                    <input type="radio" id="{{ child }}">
+                                                                </label></a>
+                                                                </ul>
+                                                            </div>
+{#                                                        {% endif %}#}
+                                                        {% elif child.font_type == 3 %}
+                                                            <div class="shop__sidebar__tags">
+                                                                <ul class="nice-scroll">
+                                                                    <a href="/shop/?q={{ child }}">{{ child }}</a>
+                                                                </ul>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="shop__product__option">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="shop__product__option__left">
+                                <p>Showing 1–12 of {{ products.count }} results</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    {% for product in products %}
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="product__item">
+                            <div class="product__item__pic set-bg" data-setbg="{{ product.product_image.first.image.url }}">
+                                <ul class="product__hover">
+                                    <li><img class="add-wishlist" data-product="{{ product.id }}"
+                                             src="{% static 'img/icon/xheart.png.pagespeed.ic.eX6BmaqN_X.png' %}"
+                                                         alt=""></li>
+                                    <li><a href="{% url 'product:shop-details' product.id %}">
+                                        <img src="{% static 'img/icon/xcompare.png.pagespeed.ic.UIWeUFOM61.png' %}"
+                                                         alt=""> <span>Shop details</span></a></li>
+                                </ul>
+                            </div>
+                            <div class="product__item__text">
+                                <h6>{{ product.name }}</h6>
+                                <a class="add-cart" data-product="{{ product.id }}">+ Add To Cart</a>
+                                <div class="rating">
+                                    {% for i in l %}
+                                        {% if i < product.get_mid_rate %}
+                                            <i class="fa fa-star" style="color: #ffc107"></i>
+                                        {% else %}
+                                            <i class="fa fa-star-o"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <h5>$ {{ product.price }}</h5>
+                                <div class="product__color__select">
+                                    {% for color in product.product_color.all|slice:':3' %}
+                                        <label for="pc-{{ color.id }}" style="background: {{ color.color }}">
+                                            <input type="radio" data-color="{{ color.id }}" id="pc-{{ color.id }}">
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="product__pagination">
+                            <a class="active" href="#">1</a>
+                            <a href="#">2</a>
+                            <a href="#">3</a>
+                            <span>...</span>
+                            <a href="#">21</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('.nav__menu>li').removeClass('active')
+$('.shop_page').addClass('active')
+</script>
+{% endblock %}

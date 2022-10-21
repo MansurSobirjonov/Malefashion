@@ -9,10 +9,10 @@ from apps.blog.models import Tag
 
 class Category(models.Model):
     FONT_TYPE = (
-        (0, 'text'),
-        (1, 'square'),
-        (2, 'circle'),
-        (3, 'tag'),
+        (0, 'Text'),
+        (1, 'Square'),
+        (2, 'Circle'),
+        (3, 'Tag'),
         (4, 'parent node'),
     )
     name = models.CharField(max_length=255)
